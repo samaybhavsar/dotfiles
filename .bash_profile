@@ -1,7 +1,20 @@
+
 # Custom Aliases
+alias apachestart='sudo /usr/sbin/apachectl start'
+alias apachestop='sudo /usr/sbin/apachectl stop'
+alias httpdreload='sudo /usr/sbin/apachectl -k graceful'
+alias httpdtest='sudo /usr/sbin/apachectl -t && /usr/sbin/apachectl -t -D DUMP_VHOSTS'
+alias wget="curl -O --retry 999 --retry-max-time 0 -C -"
+
 alias ll="ls -al"
 alias cd..="cd .."
-
+function tping {
+	ping $1 | perl -nle 'print scalar(localtime), " ", $_'
+}
+function logping {
+	ping $1 | perl -nle 'use Time::Piece; BEGIN {$|++} print localtime->datetime, " ", $_' > $2
+}
+alias tping="tping"
 # Copied from https://github.com/mathiasbynens/dotfiles/
 # Detect which `ls` flavor is in use
 if ls --color > /dev/null 2>&1; then # GNU `ls`
@@ -42,6 +55,7 @@ alias ips="ifconfig -a | grep -o 'inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[
 
 # Flush Directory Service cache
 alias flush="dscacheutil -flushcache && killall -HUP mDNSResponder"
+alias flushdns='dscacheutil -flushcache;sudo killall -HUP mDNSResponder;say flushed'
 
 # Clean up LaunchServices to remove duplicates in the “Open With” menu
 alias lscleanup="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user && killall Finder"
@@ -121,6 +135,8 @@ alias afk="/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resource
 # Reload the shell (i.e. invoke as a login shell)
 alias reload="exec $SHELL -l"
 
+# Open VLC player
+alias vlc="/Applications/VLC.app/Contents/MacOS/VLC -I rc"
 # Create a new directory and enter it
 function mkd() {
 	mkdir -p "$@" && cd "$_";
@@ -140,9 +156,20 @@ function fs() {
 	fi;
 }
 
-export PATH=/usr/local/bin/:/usr/local/php5/bin:$PATH
+export PATH=/usr/local/bin:/usr/local/php5/bin:$PATH
 # Add `~/bin` to the `$PATH`
 export PATH="$HOME/bin:$PATH";
 export NVM_DIR="/Users/samaybhavsar/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
 export PATH="$HOME/.composer/vendor/bin:$PATH"
+export PATH="$HOME/Code/spark-installer:$PATH"
+
+export ANDROID_HOME=/Users/samaybhavsar/Library/Android/sdk
+export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platforms-tools
+export PATH="/usr/local/sbin:$PATH"
+export PATH="/usr/local/mysql/bin:$PATH"
+export PATH="$HOME/Code/instagram-api:$PATH"
+
+source ~/.git-prompt.sh
+
+PS1="\[$GREEN\]\t\[$RED\]-\[$BLUE\]\u\[$YELLOW\]\[$YELLOW\]\w\[\033[m\]\[$MAGENTA\]\$(__git_ps1)\[$WHITE\]\$ "
